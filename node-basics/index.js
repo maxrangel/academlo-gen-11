@@ -1,8 +1,57 @@
 const http = require('http');
 
-const server = http.createServer((request, response) => {
-	console.log(request);
-  response.end();
+// DUMMY DATA
+const users = [
+	{ id: 1, name: 'Joe' },
+	{ id: 2, name: 'John' },
+	{ id: 3, name: 'Sara' },
+];
+
+const posts = [
+	{ id: 1, title: 'Post 1' },
+	{ id: 2, title: 'Post 2' },
+	{ id: 3, title: 'Post 3' },
+];
+
+const server = http.createServer((req, res) => {
+	const url = req.url;
+	const method = req.method;
+
+	if (method === 'GET' && url === '/users') {
+		// Return users list
+		res.write(JSON.stringify({ users }));
+	} else if (method === 'GET' && url === '/posts') {
+		// Return posts list
+		res.write(JSON.stringify({ posts }));
+	} else if (method === 'POST' && url === '/users') {
+		// Create new user in database
+		// on -> .addEventListener
+
+		const userData = [];
+
+		req.on('data', chunk => {
+			userData.push(chunk);
+		});
+
+		req.on('end', () => {
+			// name=Max
+			const parsedData = Buffer.concat(userData).toString();
+
+			// [name, Max]
+			const name = parsedData.split('=')[1];
+
+			const newUser = {
+				id: Math.floor(Math.random() * 1000),
+				name,
+			};
+
+			users.push(newUser);
+		});
+	} else {
+		res.write(`${url} is not a valid endpoint`);
+	}
+
+	res.end();
 });
 
 const PORT = 3000;
