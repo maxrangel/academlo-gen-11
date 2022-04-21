@@ -45,6 +45,7 @@ app.post('/users', (req, res) => {
 
 const PORT = 4000;
 
+// Spin up server
 app.listen(PORT, () => {
 	console.log(`Express app running on port: ${PORT}`);
 });
