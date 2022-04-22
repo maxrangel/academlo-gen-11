@@ -1,8 +1,10 @@
 const express = require('express');
-const { Sequelize } = require('sequelize');
 
 // Routers
 const { usersRouter } = require('./routes/users.routes');
+
+// Utils
+const { db } = require('./utils/database');
 
 // Init express app
 const app = express();
@@ -14,20 +16,12 @@ app.use(express.json());
 // http://localhost:4000/api/v1/users
 app.use('/api/v1/users', usersRouter);
 
-// app.get('/posts', (req, res) => {
-// 	res.status(200).json({ posts });
-// });
-
-const db = new Sequelize({
-	dialect: 'postgres',
-	host: 'localhost',
-	username: 'postgres',
-	password: 'pass1234',
-	database: 'blogs',
-});
-
 db.authenticate()
 	.then(() => console.log('Database authenticated'))
+	.catch(err => console.log(err));
+
+db.sync()
+	.then(() => console.log('Database synced'))
 	.catch(err => console.log(err));
 
 // Spin up server
