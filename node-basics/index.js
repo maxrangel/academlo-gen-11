@@ -47,6 +47,27 @@ const server = http.createServer((req, res) => {
 
 			users.push(newUser);
 		});
+	} else if (method === 'POST' && url === '/posts') {
+		const postData = [];
+
+		req.on('data', chunk => {
+			console.log(chunk);
+			postData.push(chunk);
+		});
+
+		req.on('end', () => {
+			// title=New title
+			const parsedData = Buffer.concat(postData).toString();
+
+			const title = parsedData.split('=')[1];
+
+			const newPost = {
+				id: Math.floor(Math.random() * 1000),
+				title,
+			};
+
+			posts.push(newPost);
+		});
 	} else {
 		res.write(`${url} is not a valid endpoint`);
 	}
