@@ -28,17 +28,11 @@ const createUser = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+    // const { id } = req.params;
 
     // SELECT * FROM users WHERE id = ?
-    const user = await User.findOne({ where: { id } });
-
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'User not found given that id',
-      });
-    }
+    // const user = await User.findOne({ where: { id } });
 
     res.status(200).json({
       user,
@@ -50,19 +44,13 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+    // const { id } = req.params;
     const { name } = req.body;
 
     // await User.update({ name }, { where: { id } });
 
-    const user = await User.findOne({ where: { id } });
-
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'User not found given that id',
-      });
-    }
+    // const user = await User.findOne({ where: { id } });
 
     await user.update({ name });
 
@@ -74,16 +62,10 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+    // const { id } = req.params;
 
-    const user = await User.findOne({ where: { id } });
-
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'User not found given that id',
-      });
-    }
+    // const user = await User.findOne({ where: { id } });
 
     // DELETE FROM ...
     // await user.destroy();
