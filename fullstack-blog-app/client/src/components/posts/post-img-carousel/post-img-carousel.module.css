@@ -1,0 +1,7 @@
+.carousel__dots {
+  height: 5px;
+}
+
+.carousel__dots li button {
+	height: 12px !important;
+}
