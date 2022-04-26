@@ -19,8 +19,8 @@ const User = db.define('user', {
 	},
 	status: {
 		type: DataTypes.STRING,
-		defaultValue: 'active'
-	}
+		defaultValue: 'active',
+	},
 });
 
 module.exports = { User };
