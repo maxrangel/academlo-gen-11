@@ -20,6 +20,10 @@ const Post = db.define('post', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: 'active',
+  },
 });
 
 module.exports = { Post };
