@@ -1,5 +1,8 @@
 const express = require('express');
 
+// Middlewares
+const { postExists } = require('../middlewares/posts.middlewares');
+
 // Controller
 const {
   getAllPosts,
@@ -11,10 +14,13 @@ const {
 
 const router = express.Router();
 
-router.get('/', getAllPosts);
+router.route('/').get(getAllPosts).post(createPost);
 
-router.post('/', createPost);
-
-router.route('/:id').get(getPostById).patch(updatePost).delete(deletePost);
+router
+  .use('/:id', postExists)
+  .route('/:id')
+  .get(getPostById)
+  .patch(updatePost)
+  .delete(deletePost);
 
 module.exports = { postsRouter: router };

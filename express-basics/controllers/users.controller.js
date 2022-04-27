@@ -65,8 +65,6 @@ const deleteUser = async (req, res) => {
     const { user } = req;
     // const { id } = req.params;
 
-    // const user = await User.findOne({ where: { id } });
-
     // DELETE FROM ...
     // await user.destroy();
     await user.update({ status: 'deleted' });
