@@ -19,3 +19,30 @@ const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Express app running on port: ${PORT}`);
 });
+
+/**
+ *
+ *
+ * {
+ *  user: {
+ *    id: 1,
+ *    ...userData,
+ *    posts: [ {userId: 1, ...postData},
+ *      {userId: 1,...postData},
+ *      { userId: 1, ...postData}
+ *    ]
+ *  }
+ * }
+ */
+
+/**
+ *
+ *
+ * {
+ *  user: {
+ *    id: 1,
+ *    ...userData,
+ *    cart: { ...cartData }
+ *  }
+ * }
+ */

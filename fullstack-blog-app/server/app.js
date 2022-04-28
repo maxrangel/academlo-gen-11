@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 // Routers
 const { usersRouter } = require('./routes/users.routes');
@@ -6,6 +7,9 @@ const { postsRouter } = require('./routes/posts.routes');
 
 // Init express app
 const app = express();
+
+// Enable CORS
+app.use(cors());
 
 // Enable incoming JSON data
 app.use(express.json());

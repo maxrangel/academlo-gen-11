@@ -20,7 +20,7 @@ const PostItem = ({ post }) => {
 	// State
 	const [showEditForm, setShowEditForm] = useState(false);
 
-	const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
+	const formattedDate = new Date(post.createdAt).toLocaleDateString('en-US', {
 		year: 'numeric',
 		month: 'long',
 		day: '2-digit',
@@ -40,7 +40,7 @@ const PostItem = ({ post }) => {
 	return (
 		<Card
 			actions={
-				post.user.id === 1 && [
+				post.userId === 1 && [
 					<EditOutlined onClick={onEditHandler} key='edit' />,
 					<DeleteOutlined
 						onClick={onDeleteHandler}
@@ -54,7 +54,7 @@ const PostItem = ({ post }) => {
 				color: '#114070',
 				fontWeight: 'bold',
 			}}
-			title={post.user.name}
+			// title={post.user.name}
 			extra={formattedDate}
 			hoverable
 			className={classes.card}
@@ -66,7 +66,7 @@ const PostItem = ({ post }) => {
 						<p>{post.content}</p>
 					</Col>
 					<Col span={4}>
-						<Link to={`/profile/${post.user.id}`}>View profile</Link>
+						<Link to={`/profile/${post.userId}`}>View profile</Link>
 					</Col>
 				</Row>
 			) : (
