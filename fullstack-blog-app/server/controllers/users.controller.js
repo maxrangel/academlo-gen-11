@@ -1,3 +1,6 @@
+const { validationResult } = require('express-validator');
+
+// Models
 const { User } = require('../models/user.model');
 
 const getAllUsers = async (req, res) => {
@@ -15,10 +18,10 @@ const getAllUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, password } = req.body;
 
     // INSERT INTO ...
-    const newUser = await User.create({ name, email });
+    const newUser = await User.create({ name, email, password });
 
     res.status(201).json({ newUser });
   } catch (error) {
