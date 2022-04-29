@@ -1,0 +1,16 @@
+.title {
+  text-align: center;
+  color: #f85555;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.transfer-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+
+	width: 100%;
+  margin-top: 20px;
+}
