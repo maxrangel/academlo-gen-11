@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 
+// Controllers
+const { globalErrorHandler } = require('./controllers/errors.controller');
+
 // Routers
 const { usersRouter } = require('./routes/users.routes');
 const { postsRouter } = require('./routes/posts.routes');
@@ -18,5 +21,8 @@ app.use(express.json());
 // http://localhost:4000/api/v1/users
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/posts', postsRouter);
+
+// Global error handler
+app.use('*', globalErrorHandler);
 
 module.exports = { app };

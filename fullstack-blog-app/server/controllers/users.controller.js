@@ -1,84 +1,65 @@
-const { validationResult } = require('express-validator');
-
 // Models
 const { User } = require('../models/user.model');
 
-const getAllUsers = async (req, res) => {
-  try {
-    // SELECT * FROM users;
-    const users = await User.findAll();
+// Utils
+const { catchAsync } = require('../utils/catchAsync');
 
-    res.status(200).json({
-      users,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+const getAllUsers = catchAsync(async (req, res, next) => {
+  // SELECT * FROM users;
+  const users = await User.findAll();
 
-const createUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+  res.status(200).json({
+    users,
+  });
+});
 
-    // INSERT INTO ...
-    const newUser = await User.create({ name, email, password });
+const createUser = catchAsync(async (req, res, next) => {
+  const { name, email, password } = req.body;
 
-    res.status(201).json({ newUser });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  // INSERT INTO ...
+  const newUser = await User.create({ name, email, password });
 
-const getUserById = async (req, res) => {
-  try {
-    const { user } = req;
-    // const { id } = req.params;
+  res.status(201).json({ newUser });
+});
 
-    // SELECT * FROM users WHERE id = ?
-    // const user = await User.findOne({ where: { id } });
+const getUserById = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  // const { id } = req.params;
 
-    res.status(200).json({
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  // SELECT * FROM users WHERE id = ?
+  // const user = await User.findOne({ where: { id } });
 
-const updateUser = async (req, res) => {
-  try {
-    const { user } = req;
-    // const { id } = req.params;
-    const { name } = req.body;
+  res.status(200).json({
+    user,
+  });
+});
 
-    // await User.update({ name }, { where: { id } });
+const updateUser = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  // const { id } = req.params;
+  const { name } = req.body;
 
-    // const user = await User.findOne({ where: { id } });
+  // await User.update({ name }, { where: { id } });
 
-    await user.update({ name });
+  // const user = await User.findOne({ where: { id } });
 
-    res.status(200).json({ status: 'success' });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  await user.update({ name });
 
-const deleteUser = async (req, res) => {
-  try {
-    const { user } = req;
-    // const { id } = req.params;
+  res.status(200).json({ status: 'success' });
+});
 
-    // DELETE FROM ...
-    // await user.destroy();
-    await user.update({ status: 'deleted' });
+const deleteUser = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  // const { id } = req.params;
 
-    res.status(200).json({
-      status: 'success',
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  // DELETE FROM ...
+  // await user.destroy();
+  await user.update({ status: 'deleted' });
+
+  res.status(200).json({
+    status: 'success',
+  });
+});
 
 module.exports = {
   getAllUsers,
