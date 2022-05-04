@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 // Models
 const { User } = require('../models/user.model');
 
@@ -6,7 +8,9 @@ const { catchAsync } = require('../utils/catchAsync');
 
 const getAllUsers = catchAsync(async (req, res, next) => {
   // SELECT * FROM users;
-  const users = await User.findAll();
+  const users = await User.findAll({
+    attributes: { exclude: ['password'] },
+  });
 
   res.status(200).json({
     users,
@@ -16,8 +20,14 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body;
 
+  const salt = await bcrypt.genSalt(12);
+  const hashPassword = await bcrypt.hash(password, salt);
+
   // INSERT INTO ...
-  const newUser = await User.create({ name, email, password });
+  const newUser = await User.create({ name, email, password: hashPassword });
+
+  // Remove password from response
+  newUser.password = undefined;
 
   res.status(201).json({ newUser });
 });

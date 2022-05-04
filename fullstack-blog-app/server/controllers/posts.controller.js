@@ -1,76 +1,60 @@
+// Models
 const { Post } = require('../models/post.model');
 const { User } = require('../models/user.model');
 
-const getAllPosts = async (req, res) => {
-  try {
-    const posts = await Post.findAll({
-      include: [{ model: User }],
-    });
+// Utils
+const { catchAsync } = require('../utils/catchAsync');
 
-    res.status(200).json({
-      posts,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+const getAllPosts = catchAsync(async (req, res, next) => {
+  const posts = await Post.findAll({
+    include: [{ model: User }],
+  });
 
-const createPost = async (req, res) => {
-  try {
-    const { title, content, userId } = req.body;
+  res.status(200).json({
+    posts,
+  });
+});
 
-    const newPost = await Post.create({ title, content, userId });
+const createPost = catchAsync(async (req, res, next) => {
+  const { title, content, userId } = req.body;
 
-    res.status(201).json({ newPost });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  const newPost = await Post.create({ title, content, userId });
 
-const getPostById = async (req, res) => {
-  try {
-    const { id } = req.params;
+  res.status(201).json({ newPost });
+});
 
-    const post = await Post.findOne({ where: { id } });
+const getPostById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
 
-    res.status(200).json({
-      post,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  const post = await Post.findOne({ where: { id } });
 
-const updatePost = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, content } = req.body;
+  res.status(200).json({
+    post,
+  });
+});
 
-    const post = await Post.findOne({ where: { id } });
+const updatePost = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { title, content } = req.body;
 
-    await post.update({ title, content });
+  const post = await Post.findOne({ where: { id } });
 
-    res.status(200).json({ status: 'success' });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  await post.update({ title, content });
 
-const deletePost = async (req, res) => {
-  try {
-    const { id } = req.params;
+  res.status(200).json({ status: 'success' });
+});
 
-    const post = await Post.findOne({ where: { id } });
+const deletePost = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
 
-    await post.update({ status: 'deleted' });
+  const post = await Post.findOne({ where: { id } });
 
-    res.status(200).json({
-      status: 'success',
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+  await post.update({ status: 'deleted' });
+
+  res.status(200).json({
+    status: 'success',
+  });
+});
 
 module.exports = {
   getAllPosts,
