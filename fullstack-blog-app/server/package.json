@@ -16,6 +16,7 @@
     "express-rate-limit": "^6.4.0",
     "express-validator": "^6.14.0",
     "fullstack-blog-app": "file:..",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.19.0"
