@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
+// require('crypto').randomBytes(64).toString('hex')
+
 // Models
 const { User } = require('../models/user.model');
 
@@ -12,6 +14,21 @@ const { AppError } = require('../utils/appError');
 dotenv.config({ path: './config.env' });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
+  let token;
+
+  // Extract token from headers
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    // ['Bearer', 'token']
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(new AppError('Session invalid', 403));
+  }
+
   // SELECT * FROM users;
   const users = await User.findAll({
     attributes: { exclude: ['password'] },
@@ -85,7 +102,9 @@ const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Validate that user exists with given email
-  const user = await User.findOne({ where: { email, status: 'active' } });
+  const user = await User.findOne({
+    where: { email, status: 'active' },
+  });
 
   // Compare password with db
   if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -97,7 +116,9 @@ const login = catchAsync(async (req, res, next) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-  res.status(200).json({ token });
+  user.password = undefined;
+
+  res.status(200).json({ token, user });
 });
 
 module.exports = {
