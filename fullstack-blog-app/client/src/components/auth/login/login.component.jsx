@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Input, Form } from 'antd';
 
 // Redux actions
+import { login } from '../../../store/actions/user.actions';
 
 // Component
 import Button from '../../../components/ui/button/button.component';
@@ -16,11 +17,11 @@ const Login = ({ onHideLogin }) => {
 	const navigate = useNavigate();
 
 	const submitHandler = e => {
-		console.log(e);
+		dispatch(login(e.email, e.password));
 
 		form.resetFields();
 
-		navigate('/');
+		// navigate('/');
 	};
 
 	return (

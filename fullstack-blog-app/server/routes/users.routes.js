@@ -6,6 +6,7 @@ const {
   userExists,
   protectToken,
   protectAdmin,
+  protectAccountOwner,
 } = require('../middlewares/users.middlewares');
 const {
   createUserValidations,
@@ -20,6 +21,7 @@ const {
   updateUser,
   deleteUser,
   login,
+  checkToken,
 } = require('../controllers/users.controller');
 
 const router = express.Router();
@@ -33,10 +35,12 @@ router.use(protectToken);
 
 router.get('/', protectAdmin, getAllUsers);
 
+router.get('/check-token', checkToken);
+
 router
   .route('/:id')
   .get(protectAdmin, userExists, getUserById)
-  .patch(userExists, updateUser)
-  .delete(userExists, deleteUser);
+  .patch(userExists, protectAccountOwner, updateUser)
+  .delete(userExists, protectAccountOwner, deleteUser);
 
 module.exports = { usersRouter: router };

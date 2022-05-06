@@ -2,6 +2,7 @@ const express = require('express');
 
 // Middlewares
 const { postExists } = require('../middlewares/posts.middlewares');
+const { protectToken } = require('../middlewares/users.middlewares');
 
 // Controller
 const {
@@ -10,11 +11,19 @@ const {
   getPostById,
   updatePost,
   deletePost,
+  getMyPosts,
+  getUsersPosts,
 } = require('../controllers/posts.controller');
 
 const router = express.Router();
 
+router.use(protectToken);
+
 router.route('/').get(getAllPosts).post(createPost);
+
+router.get('/me', getMyPosts);
+
+router.get('/profile/:id', getUsersPosts);
 
 router
   .use('/:id', postExists)

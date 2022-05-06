@@ -1,9 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Input, Form } from 'antd';
 
 // Redux actions
-// import { login } from '../../store/actions/user.actions';
+import { signup } from '../../../store/actions/user.actions';
 
 // Component
 import Button from '../../../components/ui/button/button.component';
@@ -15,15 +14,19 @@ const Signup = ({ onShowLogin }) => {
 	const [form] = Form.useForm();
 
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 
 	const submitHandler = e => {
-		console.log(e);
+		const userData = {
+			name: e.name,
+			email: e.email,
+			password: e.password,
+		};
+
+		dispatch(signup(userData));
+
 		form.resetFields();
 		onShowLogin();
 	};
-
-	const header = 'To create an account, please fill these fields';
 
 	return (
 		<div className={classes.container}>

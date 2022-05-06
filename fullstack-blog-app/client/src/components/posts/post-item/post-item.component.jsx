@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, Collapse, Row, Col } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -15,6 +15,7 @@ import UpdatePostForm from '../../forms/update-post-form/update-post-form.compon
 import classes from './post-item.module.css';
 
 const PostItem = ({ post }) => {
+	const user = useSelector(state => state.user.user);
 	const dispatch = useDispatch();
 
 	// State
@@ -40,7 +41,7 @@ const PostItem = ({ post }) => {
 	return (
 		<Card
 			actions={
-				post.userId === 1 && [
+				post.userId === user.id && [
 					<EditOutlined onClick={onEditHandler} key='edit' />,
 					<DeleteOutlined
 						onClick={onDeleteHandler}
@@ -54,7 +55,7 @@ const PostItem = ({ post }) => {
 				color: '#114070',
 				fontWeight: 'bold',
 			}}
-			// title={post.user.name}
+			title={post.user.name}
 			extra={formattedDate}
 			hoverable
 			className={classes.card}
