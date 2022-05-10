@@ -28,7 +28,6 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Endpoints
-// http://localhost:4000/api/v1/users
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/posts', postsRouter);
 

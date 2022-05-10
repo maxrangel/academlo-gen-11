@@ -1,8 +1,7 @@
 const { app } = require('./app');
 
 // Models
-const { Post } = require('./models/post.model');
-const { User } = require('./models/user.model');
+const { initModels } = require('./models/initModels');
 
 // Utils
 const { db } = require('./utils/database');
@@ -13,11 +12,7 @@ db.authenticate()
   .catch(err => console.log(err));
 
 // Establish models relations
-
-// 1 User <----> M Post
-// User.hasMany(Post, { foreignKey: 'userId' });
-User.hasMany(Post);
-Post.belongsTo(User);
+initModels();
 
 // Sync sequelize models
 db.sync()
