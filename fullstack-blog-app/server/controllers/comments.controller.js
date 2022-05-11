@@ -36,7 +36,7 @@ const updateComment = catchAsync(async (req, res, next) => {
 
   await comment.update({ text });
 
-  res.status(200).json({ status: 'succes' });
+  res.status(200).json({ status: 'success' });
 });
 
 const deleteComment = catchAsync(async (req, res, next) => {
@@ -44,7 +44,7 @@ const deleteComment = catchAsync(async (req, res, next) => {
 
   await comment.update({ status: 'deleted' });
 
-  res.status(200).json({ status: 'succes' });
+  res.status(200).json({ status: 'success' });
 });
 
 module.exports = {

@@ -15,6 +15,9 @@ dotenv.config({ path: './config.env' });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
   // SELECT * FROM users;
+  // Include the posts that each user has created
+  // Include the comments that each user has created
+  // Include the post in which the comment was made
   const users = await User.findAll({
     attributes: { exclude: ['password'] },
   });

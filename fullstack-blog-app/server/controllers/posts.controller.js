@@ -1,6 +1,7 @@
 // Models
 const { Post } = require('../models/post.model');
 const { User } = require('../models/user.model');
+const { Comment } = require('../models/comment.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
@@ -8,7 +9,13 @@ const { catchAsync } = require('../utils/catchAsync');
 const getAllPosts = catchAsync(async (req, res, next) => {
   const posts = await Post.findAll({
     where: { status: 'active' },
-    include: [{ model: User, attributes: { exclude: ['password'] } }],
+    include: [
+      { model: User, attributes: { exclude: ['password'] } },
+      {
+        model: Comment,
+        include: [{ model: User, attributes: ['id', 'name'] }],
+      },
+    ],
   });
 
   res.status(200).json({
