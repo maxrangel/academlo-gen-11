@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 
 // Models
 const { User } = require('../models/user.model');
+const { Post } = require('../models/post.model');
+const { Comment } = require('../models/comment.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
@@ -20,6 +22,13 @@ const getAllUsers = catchAsync(async (req, res, next) => {
   // Include the post in which the comment was made
   const users = await User.findAll({
     attributes: { exclude: ['password'] },
+    include: [
+      { model: Post },
+      {
+        model: Comment,
+        include: [{ model: Post }],
+      },
+    ],
   });
 
   res.status(200).json({
