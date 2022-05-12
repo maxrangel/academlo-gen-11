@@ -11,7 +11,7 @@ const TransferItem = ({ transfer }) => {
 
 	return (
 		<div className={classes.transfer}>
-			<p className={classes['transfer__user']}>To: {transfer.user}</p>
+			{/* <p className={classes['transfer__user']}>To: {transfer.user}</p> */}
 			<p className={classes['transfer__date']}>Date: {formattedDate}</p>
 			<p className={classes['transfer__amount']}>Amount: ${formattedAmount}</p>
 		</div>
