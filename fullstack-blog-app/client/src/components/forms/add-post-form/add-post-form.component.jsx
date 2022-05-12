@@ -18,15 +18,11 @@ const AddPostForm = () => {
 			return message.error('Enter a valid title and content', 1.5);
 		}
 
-		dispatch(submitPost(e.title, e.content));
+		console.log(e);
+
+		// dispatch(submitPost(e.title, e.content));
 
 		form.resetFields();
-	};
-
-	const uploadProps = {
-		maxCount: 3,
-		// Prevent file to be sent
-		beforeUpload: file => false,
 	};
 
 	return (
@@ -58,13 +54,13 @@ const AddPostForm = () => {
 					/>
 				</Form.Item>
 
-				{/* <Form.Item labelCol={0} wrapperCol={24} name='images'>
+				<Form.Item labelCol={0} wrapperCol={24} name='images'>
 					<Upload maxCount={3} beforeUpload={() => false}>
 						<Button type='button' size='block' color='tertiary'>
-							Upload png only
+							Upload images
 						</Button>
 					</Upload>
-				</Form.Item> */}
+				</Form.Item>
 
 				<div className={classes.actions}>
 					<Button size='block' color='primary' type='submit'>
