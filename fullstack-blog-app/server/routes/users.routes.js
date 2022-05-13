@@ -32,8 +32,8 @@ const router = express.Router();
 router.post(
   '/',
   upload.single('profileImg'),
-  // createUserValidations,
-  // checkValidations,
+  createUserValidations,
+  checkValidations,
   createUser
 );
 

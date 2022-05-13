@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 // require('crypto').randomBytes(64).toString('hex')
 
@@ -12,6 +13,7 @@ const { Comment } = require('../models/comment.model');
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
+const { storage } = require('../utils/firebase');
 
 dotenv.config({ path: './config.env' });
 
@@ -39,31 +41,35 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
-  console.log(req.file);
+  const imgRef = ref(storage, `users/${req.file.originalname}`);
+  const imgUploaded = await uploadBytes(imgRef, req.file.buffer);
 
-  // const salt = await bcrypt.genSalt(12);
-  // const hashPassword = await bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(12);
+  const hashPassword = await bcrypt.hash(password, salt);
 
-  // // INSERT INTO ...
-  // const newUser = await User.create({
-  //   name,
-  //   email,
-  //   password: hashPassword,
-  //   role,
-  // });
+  // INSERT INTO ...
+  const newUser = await User.create({
+    name,
+    email,
+    password: hashPassword,
+    role,
+    profileImgUrl: imgUploaded.metadata.fullPath,
+  });
 
-  // // Remove password from response
-  // newUser.password = undefined;
+  // Remove password from response
+  newUser.password = undefined;
 
-  res.status(201).json({ status: 'success' });
+  res.status(201).json({ status: 'success', newUser });
 });
 
 const getUserById = catchAsync(async (req, res, next) => {
   const { user } = req;
-  // const { id } = req.params;
 
-  // SELECT * FROM users WHERE id = ?
-  // const user = await User.findOne({ where: { id } });
+  // Get url from firebase
+  const imgRef = ref(storage, user.profileImgUrl);
+  const url = await getDownloadURL(imgRef);
+
+  user.profileImgUrl = url;
 
   res.status(200).json({
     user,
