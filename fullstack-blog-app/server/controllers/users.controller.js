@@ -39,21 +39,23 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
-  const salt = await bcrypt.genSalt(12);
-  const hashPassword = await bcrypt.hash(password, salt);
+  console.log(req.file);
 
-  // INSERT INTO ...
-  const newUser = await User.create({
-    name,
-    email,
-    password: hashPassword,
-    role,
-  });
+  // const salt = await bcrypt.genSalt(12);
+  // const hashPassword = await bcrypt.hash(password, salt);
 
-  // Remove password from response
-  newUser.password = undefined;
+  // // INSERT INTO ...
+  // const newUser = await User.create({
+  //   name,
+  //   email,
+  //   password: hashPassword,
+  //   role,
+  // });
 
-  res.status(201).json({ newUser });
+  // // Remove password from response
+  // newUser.password = undefined;
+
+  res.status(201).json({ status: 'success' });
 });
 
 const getUserById = catchAsync(async (req, res, next) => {

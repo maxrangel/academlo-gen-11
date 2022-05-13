@@ -24,9 +24,18 @@ const {
   checkToken,
 } = require('../controllers/users.controller');
 
+// Utils
+const { upload } = require('../utils/multer');
+
 const router = express.Router();
 
-router.post('/', createUserValidations, checkValidations, createUser);
+router.post(
+  '/',
+  upload.single('profileImg'),
+  // createUserValidations,
+  // checkValidations,
+  createUser
+);
 
 router.post('/login', login);
 
