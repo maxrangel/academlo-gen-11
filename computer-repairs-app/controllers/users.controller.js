@@ -1,95 +1,51 @@
 // Models
 const { User } = require('../models/user.model');
 
-const getAllUsers = async (req, res) => {
-	try {
-		const users = await User.findAll();
+// Utils
+const { catchAsync } = require('../utils/catchAsync');
 
-		res.status(200).json({
-			users,
-		});
-	} catch (err) {
-		console.log(err);
-	}
-};
+const getAllUsers = catchAsync(async (req, res, next) => {
+	const users = await User.findAll();
 
-const getUserById = async (req, res) => {
-	try {
-		const { id } = req.params;
+	res.status(200).json({
+		users,
+	});
+});
 
-		const user = await User.findOne({ where: { id } });
+const getUserById = catchAsync(async (req, res, next) => {
+	const { user } = req;
 
-		if (!user) {
-			return res.status(404).json({
-				status: 'error',
-				message: 'No user found with the given id',
-			});
-		}
+	res.status(200).json({
+		user,
+	});
+});
 
-		res.status(200).json({
-			user,
-		});
-	} catch (error) {
-		console.log(error);
-	}
-};
+const createUser = catchAsync(async (req, res, next) => {
+	const { name, email, password, role } = req.body;
 
-const createUser = async (req, res) => {
-	try {
-		const { name, email, password, role } = req.body;
+	const newUser = await User.create({ name, email, password, role });
 
-		const newUser = await User.create({ name, email, password, role });
+	res.status(201).json({
+		newUser,
+	});
+});
 
-		res.status(201).json({
-			newUser,
-		});
-	} catch (error) {
-		console.log(error);
-	}
-};
+const updateUser = catchAsync(async (req, res, next) => {
+	const { name, email } = req.body;
+	const { user } = req;
 
-const updateUser = async (req, res) => {
-	try {
-		const { name, email } = req.body;
-		const { id } = req.params;
+	await user.update({ name, email });
 
-		const user = await User.findOne({ where: { id } });
+	res.status(200).json({ status: 'success' });
+});
 
-		if (!user) {
-			return res.status(404).json({
-				status: 'error',
-				message: 'Cannnot update user because it does not exists',
-			});
-		}
+const deleteUser = catchAsync(async (req, res, next) => {
+	const { user } = req;
 
-		await user.update({ name, email });
+	await user.update({ status: 'deleted' });
 
-		res.status(200).json({ status: 'success' });
-	} catch (error) {
-		console.log(error);
-	}
-};
-
-const deleteUser = async (req, res) => {
-	try {
-		const { id } = req.params;
-
-		const user = await User.findOne({ where: { id } });
-
-		if (!user) {
-			return res.status(404).json({
-				status: 'error',
-				message: 'Cannnot delete user because it does not exists',
-			});
-		}
-
-		await user.update({ status: 'deleted' });
-
-		res.status(200).json({ status: 'success' });
-	} catch (error) {
-		console.log(error);
-	}
-};
+	res.status(200).json({ status: 'success' });
+});
 
 module.exports = {
 	getAllUsers,

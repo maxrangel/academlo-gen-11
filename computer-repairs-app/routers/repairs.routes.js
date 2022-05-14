@@ -1,8 +1,16 @@
 const express = require('express');
 
+// Middlewares
+const { pendingRepairExists } = require('../middlewares/repairs.middlewares');
+const {
+	createRepairValidations,
+	checkValidations,
+} = require('../middlewares/validators.middleware');
+
 // Controllers
 const {
-	getAllRepairs,
+	getAllCompletedRepairs,
+	getAllPendingRepairs,
 	createRepair,
 	getRepairById,
 	repairCancelled,
@@ -11,14 +19,16 @@ const {
 
 const router = express.Router();
 
-router.get('/', getAllRepairs);
+router.get('/completed', getAllCompletedRepairs);
 
-router.post('/', createRepair);
+router.get('/pending', getAllPendingRepairs);
 
-router.get('/:id', getRepairById);
+router.post('/', createRepairValidations, checkValidations, createRepair);
 
-router.patch('/:id', repairCompleted);
+router.get('/:id', pendingRepairExists, getRepairById);
 
-router.delete('/:id', repairCancelled);
+router.patch('/:id', pendingRepairExists, repairCompleted);
+
+router.delete('/:id', pendingRepairExists, repairCancelled);
 
 module.exports = { repairsRouter: router };
