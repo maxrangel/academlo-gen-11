@@ -33,8 +33,22 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     ],
   });
 
+  // Map async: you will use this techinque everytime that you need some async operations inside of an array
+  const usersPromises = users.map(async user => {
+    // Create firebase img ref and get the full path
+    const imgRef = ref(storage, user.profileImgUrl);
+    const url = await getDownloadURL(imgRef);
+
+    // Update the user's profileImgUrl property
+    user.profileImgUrl = url;
+    return user;
+  });
+
+  // Resolve every promise that map gave us ([ Promise { <pending> }, Promise { <pending> } ])
+  const usersResolved = await Promise.all(usersPromises);
+
   res.status(200).json({
-    users,
+    users: usersResolved,
   });
 });
 

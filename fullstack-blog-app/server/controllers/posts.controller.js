@@ -2,6 +2,7 @@
 const { Post } = require('../models/post.model');
 const { User } = require('../models/user.model');
 const { Comment } = require('../models/comment.model');
+const { PostImg } = require('../models/postImg.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
@@ -13,6 +14,7 @@ const getAllPosts = catchAsync(async (req, res, next) => {
       { model: User, attributes: { exclude: ['password'] } },
       {
         model: Comment,
+        where: { status: 'active' },
         include: [{ model: User, attributes: ['id', 'name'] }],
       },
     ],
@@ -29,7 +31,17 @@ const createPost = catchAsync(async (req, res, next) => {
 
   const newPost = await Post.create({ title, content, userId: sessionUser.id });
 
-  res.status(201).json({ newPost });
+  console.log(req.files);
+
+  // Map async
+
+  // Map through the files and upload them to firebase
+  // Create img ref
+  // Use uploadBytes
+  // Create a new postImg instance (PostImg.create)
+  // Resolve the pending promises
+
+  res.status(201).json({ status: 'success' });
 });
 
 const getPostById = catchAsync(async (req, res, next) => {
