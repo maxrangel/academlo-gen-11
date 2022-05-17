@@ -1,3 +1,5 @@
+const { ref, uploadBytes } = require('firebase/storage');
+
 // Models
 const { Post } = require('../models/post.model');
 const { User } = require('../models/user.model');
@@ -6,11 +8,13 @@ const { PostImg } = require('../models/postImg.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
+const { storage } = require('../utils/firebase');
 
 const getAllPosts = catchAsync(async (req, res, next) => {
   const posts = await Post.findAll({
     where: { status: 'active' },
     include: [
+      { model: PostImg },
       { model: User, attributes: { exclude: ['password'] } },
       {
         model: Comment,
@@ -31,17 +35,25 @@ const createPost = catchAsync(async (req, res, next) => {
 
   const newPost = await Post.create({ title, content, userId: sessionUser.id });
 
-  console.log(req.files);
-
-  // Map async
-
   // Map through the files and upload them to firebase
-  // Create img ref
-  // Use uploadBytes
-  // Create a new postImg instance (PostImg.create)
-  // Resolve the pending promises
+  const postImgsPromises = req.files.map(async file => {
+    // Create img ref
+    const imgRef = ref(storage, `posts/${file.originalname}`);
 
-  res.status(201).json({ status: 'success' });
+    // Use uploadBytes
+    const imgUploaded = await uploadBytes(imgRef, file.buffer);
+
+    // Create a new postImg instance (PostImg.create)
+    return await PostImg.create({
+      postId: newPost.id,
+      postImgUrl: imgUploaded.metadata.fullPath,
+    });
+  });
+
+  // Resolve the pending promises
+  await Promise.all(postImgsPromises);
+
+  res.status(201).json({ status: 'success', newPost });
 });
 
 const getPostById = catchAsync(async (req, res, next) => {
