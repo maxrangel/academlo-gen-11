@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 // Models
@@ -18,7 +19,6 @@ const getAllPosts = catchAsync(async (req, res, next) => {
       { model: User, attributes: { exclude: ['password'] } },
       {
         model: Comment,
-        // where: { status: 'active' },
         include: [{ model: User, attributes: ['id', 'name'] }],
       },
     ],
