@@ -1,4 +1,4 @@
-const { ref, uploadBytes } = require('firebase/storage');
+const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 // Models
 const { Post } = require('../models/post.model');
@@ -18,14 +18,35 @@ const getAllPosts = catchAsync(async (req, res, next) => {
       { model: User, attributes: { exclude: ['password'] } },
       {
         model: Comment,
-        where: { status: 'active' },
+        // where: { status: 'active' },
         include: [{ model: User, attributes: ['id', 'name'] }],
       },
     ],
   });
 
+  // Get all posts' imgs
+  const postsPromises = posts.map(async post => {
+    // Get imgs from firebase
+    const postImgsPromises = post.postImgs.map(async postImg => {
+      const imgRef = ref(storage, postImg.postImgUrl);
+      const url = await getDownloadURL(imgRef);
+
+      // Update postImgUrl prop
+      postImg.postImgUrl = url;
+      return postImg;
+    });
+
+    // Resolve pending promises
+    const postImgsResolved = await Promise.all(postImgsPromises);
+    post.postImgs = postImgsResolved;
+
+    return post;
+  });
+
+  const postsResolved = await Promise.all(postsPromises);
+
   res.status(200).json({
-    posts,
+    posts: postsResolved,
   });
 });
 
@@ -38,7 +59,10 @@ const createPost = catchAsync(async (req, res, next) => {
   // Map through the files and upload them to firebase
   const postImgsPromises = req.files.map(async file => {
     // Create img ref
-    const imgRef = ref(storage, `posts/${file.originalname}`);
+    const imgRef = ref(
+      storage,
+      `posts/${newPost.id}-${Date.now()}-${file.originalname}`
+    );
 
     // Use uploadBytes
     const imgUploaded = await uploadBytes(imgRef, file.buffer);

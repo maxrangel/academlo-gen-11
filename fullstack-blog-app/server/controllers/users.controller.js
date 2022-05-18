@@ -55,7 +55,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
-  const imgRef = ref(storage, `users/${req.file.originalname}`);
+  const imgRef = ref(storage, `users/${Date.now()}-${req.file.originalname}`);
   const imgUploaded = await uploadBytes(imgRef, req.file.buffer);
 
   const salt = await bcrypt.genSalt(12);
