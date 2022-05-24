@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 
 // Controllers
 const { globalErrorHandler } = require('./controllers/errors.controller');
@@ -22,6 +23,13 @@ app.use(express.json());
 
 // Enable incoming Form-Data
 app.use(express.urlencoded({ extended: true }));
+
+// Set pug as template engine
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// Enable static assets
+app.use(express.static('public'));
 
 // Limit IP requests
 const limiter = rateLimit({
