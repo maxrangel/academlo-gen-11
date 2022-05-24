@@ -12,6 +12,8 @@ const { catchAsync } = require('../utils/catchAsync');
 const { storage } = require('../utils/firebase');
 
 const getAllPosts = catchAsync(async (req, res, next) => {
+  // SELECT * FROM post
+  // WHERE post.status = 'active' AND comments.status = 'active'
   const posts = await Post.findAll({
     where: { status: 'active' },
     include: [
@@ -19,10 +21,14 @@ const getAllPosts = catchAsync(async (req, res, next) => {
       { model: User, attributes: { exclude: ['password'] } },
       {
         model: Comment,
+        required: false,
+        where: { status: 'active' },
         include: [{ model: User, attributes: ['id', 'name'] }],
       },
     ],
   });
+
+  console.log(posts.length);
 
   // Get all posts' imgs
   const postsPromises = posts.map(async post => {

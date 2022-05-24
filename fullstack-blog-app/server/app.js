@@ -9,6 +9,7 @@ const { globalErrorHandler } = require('./controllers/errors.controller');
 const { usersRouter } = require('./routes/users.routes');
 const { postsRouter } = require('./routes/posts.routes');
 const { commentsRouter } = require('./routes/comments.routes');
+const { viewsRouter } = require('./routes/views.routes');
 
 // Init express app
 const app = express();
@@ -32,6 +33,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Endpoints
+app.use('/', viewsRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/posts', postsRouter);
 app.use('/api/v1/comments', commentsRouter);
