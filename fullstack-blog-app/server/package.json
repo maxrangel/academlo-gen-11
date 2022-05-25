@@ -19,6 +19,7 @@
     "fullstack-blog-app": "file:..",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.4",
+    "nodemailer": "^6.7.5",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "pug": "^3.0.2",
