@@ -14,6 +14,7 @@ const { Comment } = require('../models/comment.model');
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
 const { storage } = require('../utils/firebase');
+const { Email } = require('../utils/email');
 
 dotenv.config({ path: './config.env' });
 
@@ -69,6 +70,8 @@ const createUser = catchAsync(async (req, res, next) => {
     role,
     profileImgUrl: imgUploaded.metadata.fullPath,
   });
+
+  await new Email().sendWelcome();
 
   // Remove password from response
   newUser.password = undefined;

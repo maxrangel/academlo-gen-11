@@ -11,7 +11,7 @@ const { catchAsync } = require('../utils/catchAsync');
 const renderIndex = catchAsync(async (req, res, next) => {
   const posts = await Post.findAll({ where: { status: 'active' } });
 
-  res.status(200).render('emails/baseEmail', {
+  res.status(200).render('index', {
     title: 'Title coming from controller',
     posts,
   });
