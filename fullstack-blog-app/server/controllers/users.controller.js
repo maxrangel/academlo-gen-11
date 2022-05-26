@@ -71,7 +71,7 @@ const createUser = catchAsync(async (req, res, next) => {
     profileImgUrl: imgUploaded.metadata.fullPath,
   });
 
-  await new Email().sendWelcome();
+  await new Email(newUser.email).sendWelcome(newUser.name);
 
   // Remove password from response
   newUser.password = undefined;
