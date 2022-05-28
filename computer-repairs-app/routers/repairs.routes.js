@@ -1,6 +1,10 @@
 const express = require('express');
 
 // Middlewares
+const {
+	protectToken,
+	protectEmployee,
+} = require('../middlewares/users.middlewares');
 const { pendingRepairExists } = require('../middlewares/repairs.middlewares');
 const {
 	createRepairValidations,
@@ -19,16 +23,18 @@ const {
 
 const router = express.Router();
 
+router.use(protectToken);
+
 router.get('/completed', getAllCompletedRepairs);
 
-router.get('/pending', getAllPendingRepairs);
+router.get('/pending', protectEmployee, getAllPendingRepairs);
 
 router.post('/', createRepairValidations, checkValidations, createRepair);
 
-router.get('/:id', pendingRepairExists, getRepairById);
+router.get('/:id', protectEmployee, pendingRepairExists, getRepairById);
 
-router.patch('/:id', pendingRepairExists, repairCompleted);
+router.patch('/:id', protectEmployee, pendingRepairExists, repairCompleted);
 
-router.delete('/:id', pendingRepairExists, repairCancelled);
+router.delete('/:id', protectEmployee, pendingRepairExists, repairCancelled);
 
 module.exports = { repairsRouter: router };
