@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const morgan = require('morgan');
 
 // Controllers
 const { globalErrorHandler } = require('./controllers/errors.controller');
@@ -31,6 +32,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Enable static assets
 app.use(express.static('public'));
 
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+else app.use(morgan('combined'));
+
 // Limit IP requests
 const limiter = rateLimit({
   max: 10000,
@@ -41,7 +45,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Endpoints
-app.use('/', viewsRouter);
+app.use('/views', viewsRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/posts', postsRouter);
 app.use('/api/v1/comments', commentsRouter);
