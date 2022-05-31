@@ -18,9 +18,7 @@ const AddPostForm = () => {
 			return message.error('Enter a valid title and content', 1.5);
 		}
 
-		console.log(e);
-
-		// dispatch(submitPost(e.title, e.content));
+		dispatch(submitPost(e.title, e.content, e.images));
 
 		form.resetFields();
 	};

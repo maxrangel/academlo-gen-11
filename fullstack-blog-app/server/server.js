@@ -1,3 +1,4 @@
+const { Server } = require('socket.io');
 const { app } = require('./app');
 
 // Models
@@ -22,6 +23,22 @@ db.sync()
 // Spin up server
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Express app running on port: ${PORT}`);
+});
+
+// Init socket.io server
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+io.on('connection', socket => {
+  console.log('Client connected');
+
+  socket.on('hello', data => {
+    console.log(data);
+  });
 });

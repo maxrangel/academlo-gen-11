@@ -28,8 +28,6 @@ const getAllPosts = catchAsync(async (req, res, next) => {
     ],
   });
 
-  console.log(posts.length);
-
   // Get all posts' imgs
   const postsPromises = posts.map(async post => {
     // Get imgs from firebase
@@ -62,28 +60,32 @@ const createPost = catchAsync(async (req, res, next) => {
 
   const newPost = await Post.create({ title, content, userId: sessionUser.id });
 
-  // Map through the files and upload them to firebase
-  const postImgsPromises = req.files.map(async file => {
-    // Create img ref
-    const imgRef = ref(
-      storage,
-      `posts/${newPost.id}-${Date.now()}-${file.originalname}`
-    );
+  // // Map through the files and upload them to firebase
+  // const postImgsPromises = req.files.map(async file => {
+  //   // Create img ref
+  //   const imgRef = ref(
+  //     storage,
+  //     `posts/${newPost.id}-${Date.now()}-${file.originalname}`
+  //   );
 
-    // Use uploadBytes
-    const imgUploaded = await uploadBytes(imgRef, file.buffer);
+  //   // Use uploadBytes
+  //   const imgUploaded = await uploadBytes(imgRef, file.buffer);
 
-    // Create a new postImg instance (PostImg.create)
-    return await PostImg.create({
-      postId: newPost.id,
-      postImgUrl: imgUploaded.metadata.fullPath,
-    });
+  //   // Create a new postImg instance (PostImg.create)
+  //   return await PostImg.create({
+  //     postId: newPost.id,
+  //     postImgUrl: imgUploaded.metadata.fullPath,
+  //   });
+  // });
+
+  // // Resolve the pending promises
+  // await Promise.all(postImgsPromises);
+
+  res.status(201).json({
+    status: 'success',
+    newPost,
+    name: sessionUser.name,
   });
-
-  // Resolve the pending promises
-  await Promise.all(postImgsPromises);
-
-  res.status(201).json({ status: 'success', newPost });
 });
 
 const getPostById = catchAsync(async (req, res, next) => {

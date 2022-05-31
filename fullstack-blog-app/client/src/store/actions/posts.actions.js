@@ -23,20 +23,31 @@ export const getPosts = () => {
 	};
 };
 
-export const submitPost = (title, content) => {
+export const submitPost = (title, content, images) => {
 	return async dispatch => {
 		try {
 			// API REQUEST
-			const postData = { title, content };
+			// const postData = { title, content };
+			const postData = new FormData();
+
+			postData.append('title', title);
+			postData.append('content', content);
+
+			// images.fileList.forEach(img => {
+			// 	postData.append('postImgs', img);
+			// });
+
 			const token = localStorage.getItem('token');
 
 			const res = await axios.post(API_URL, postData, {
 				headers: { authorization: `Bearer ${token}` },
 			});
 
-			const { newPost } = res.data;
+			const { newPost, name } = res.data;
 
-			dispatch(postsActions.newPost({ newPost }));
+			dispatch(
+				postsActions.newPost({ newPost: { ...newPost, user: { name } } })
+			);
 		} catch (error) {
 			console.log(error);
 		}

@@ -24,7 +24,8 @@
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "pug": "^3.0.2",
-    "sequelize": "^6.19.0"
+    "sequelize": "^6.19.0",
+    "socket.io": "^4.5.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

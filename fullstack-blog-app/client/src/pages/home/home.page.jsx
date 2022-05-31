@@ -1,7 +1,8 @@
 import { Row, Col } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
 
 // Redux actions
 import { checkToken } from '../../store/actions/user.actions';
@@ -13,10 +14,22 @@ import AddPostForm from '../../components/forms/add-post-form/add-post-form.comp
 import classes from './home.module.css';
 
 const Home = () => {
+	// State
+	const [socket, setSocket] = useState(null);
+
 	// Check if user is authenticated from state
 	const isAuth = useSelector(state => state.user.isAuth);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		const newSocket = io('http://localhost:4000');
+		setSocket(newSocket);
+
+		newSocket.emit('hello', { from: 'React' });
+
+		return () => newSocket.close();
+	}, []);
 
 	useEffect(() => {
 		if (!isAuth) navigate('/auth');
