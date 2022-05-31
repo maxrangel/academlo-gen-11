@@ -20,7 +20,10 @@ const {
   createProductValidations,
   checkValidations,
 } = require('../middlewares/validations.middlewares');
-const { protectProductOwner } = require('../middlewares/products.middlewares');
+const {
+  protectProductOwner,
+  productExists,
+} = require('../middlewares/products.middlewares');
 
 const router = express.Router();
 
@@ -28,7 +31,7 @@ router.get('/', getAllProducts);
 
 router.get('/categories', getAllCategories);
 
-router.get('/:id', getProductById);
+router.get('/:id', productExists, getProductById);
 
 router.use(protectToken);
 
@@ -39,6 +42,7 @@ router.post('/categories', createCategory);
 router.patch('/categories/:id', updateCategory);
 
 router
+  .use('/:id', productExists)
   .route('/:id')
   .patch(protectProductOwner, updateProduct)
   .delete(protectProductOwner, deleteProduct);
