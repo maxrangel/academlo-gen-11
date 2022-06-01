@@ -9,7 +9,7 @@ import Button from '../../ui/button/button.component';
 
 import classes from './add-post-form.module.css';
 
-const AddPostForm = () => {
+const AddPostForm = ({ socket }) => {
 	const dispatch = useDispatch();
 	const [form] = Form.useForm();
 
@@ -18,7 +18,7 @@ const AddPostForm = () => {
 			return message.error('Enter a valid title and content', 1.5);
 		}
 
-		dispatch(submitPost(e.title, e.content, e.images));
+		dispatch(submitPost(e.title, e.content, e.images, socket));
 
 		form.resetFields();
 	};
@@ -52,13 +52,13 @@ const AddPostForm = () => {
 					/>
 				</Form.Item>
 
-				<Form.Item labelCol={0} wrapperCol={24} name='images'>
+				{/* <Form.Item labelCol={0} wrapperCol={24} name='images'>
 					<Upload maxCount={3} beforeUpload={() => false}>
 						<Button type='button' size='block' color='tertiary'>
 							Upload images
 						</Button>
 					</Upload>
-				</Form.Item>
+				</Form.Item> */}
 
 				<div className={classes.actions}>
 					<Button size='block' color='primary' type='submit'>

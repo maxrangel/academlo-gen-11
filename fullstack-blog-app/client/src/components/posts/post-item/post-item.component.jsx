@@ -79,7 +79,7 @@ const PostItem = ({ post }) => {
 				/>
 			)}
 
-			<PostImgCarousel />
+			{/* <PostImgCarousel /> */}
 
 			{/* We'll implement comments later on the module */}
 			{/* <Collapse ghost>

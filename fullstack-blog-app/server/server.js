@@ -36,9 +36,7 @@ const io = new Server(server, {
 });
 
 io.on('connection', socket => {
-  console.log('Client connected');
-
-  socket.on('hello', data => {
-    console.log(data);
+  socket.on('new-post', newPostData => {
+    socket.broadcast.emit('render-new-post', newPostData);
   });
 });

@@ -23,7 +23,7 @@ export const getPosts = () => {
 	};
 };
 
-export const submitPost = (title, content, images) => {
+export const submitPost = (title, content, images, socket) => {
 	return async dispatch => {
 		try {
 			// API REQUEST
@@ -45,9 +45,11 @@ export const submitPost = (title, content, images) => {
 
 			const { newPost, name } = res.data;
 
-			dispatch(
-				postsActions.newPost({ newPost: { ...newPost, user: { name } } })
-			);
+			const newPostData = { ...newPost, user: { name } };
+
+			socket.emit('new-post', newPostData);
+
+			dispatch(postsActions.newPost({ newPost: newPostData }));
 		} catch (error) {
 			console.log(error);
 		}

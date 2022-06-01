@@ -19,14 +19,14 @@ const Home = () => {
 
 	// Check if user is authenticated from state
 	const isAuth = useSelector(state => state.user.isAuth);
+	const posts = useSelector(state => state.posts.posts);
+
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const newSocket = io('http://localhost:4000');
 		setSocket(newSocket);
-
-		newSocket.emit('hello', { from: 'React' });
 
 		return () => newSocket.close();
 	}, []);
@@ -40,10 +40,10 @@ const Home = () => {
 		<div className={classes.home}>
 			<Row justify='space-around'>
 				<Col span={6} xs={24} lg={8}>
-					<AddPostForm />
+					<AddPostForm socket={socket} />
 				</Col>
 				<Col span={18} xs={24} lg={16}>
-					<PostsList />
+					<PostsList socket={socket} postsList={posts} />
 				</Col>
 			</Row>
 		</div>

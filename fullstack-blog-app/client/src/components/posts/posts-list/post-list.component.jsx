@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col } from 'antd';
 
@@ -10,9 +10,20 @@ import PostItem from '../post-item/post-item.component';
 
 import classes from './post-list.module.css';
 
-const PostsList = () => {
-	const posts = useSelector(state => state.posts.posts);
+const PostsList = ({ socket, postsList }) => {
+	const [posts, setPosts] = useState(postsList);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (socket) {
+			socket.on('render-new-post', data => {
+				setPosts(prevPosts => {
+					const newPosts = [data, ...prevPosts];
+					return newPosts;
+				});
+			});
+		}
+	}, [socket, posts]);
 
 	useEffect(() => {
 		dispatch(getPosts());
