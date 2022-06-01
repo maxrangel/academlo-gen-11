@@ -2,6 +2,7 @@ const express = require('express');
 
 // Controllers
 const {
+  getUserCart,
   addProductToCart,
   updateProductInCart,
   purchaseCart,
@@ -14,6 +15,8 @@ const { protectToken } = require('../middlewares/users.middlewares');
 const router = express.Router();
 
 router.use(protectToken);
+
+router.get('/', getUserCart);
 
 router.post('/add-product', addProductToCart);
 

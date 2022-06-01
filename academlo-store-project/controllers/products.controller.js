@@ -1,11 +1,19 @@
 // Models
 const { Product } = require('../models/product.model');
+const { Category } = require('../models/category.model');
+const { User } = require('../models/user.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
 
 const getAllProducts = catchAsync(async (req, res, next) => {
-  const products = await Product.findAll({ where: { status: 'active' } });
+  const products = await Product.findAll({
+    where: { status: 'active' },
+    include: [
+      { model: Category, attributes: ['name'] },
+      { model: User, attributes: ['username', 'email'] },
+    ],
+  });
 
   res.status(200).json({ products });
 });
