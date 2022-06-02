@@ -69,6 +69,46 @@ const addProductToCart = catchAsync(async (req, res, next) => {
 });
 
 const updateProductInCart = catchAsync(async (req, res, next) => {
+  const { newQty, productId } = req.body;
+  const { sessionUser } = req;
+
+  // Get user's cart
+  const cart = await Cart.findOne({
+    where: { status: 'active', userId: sessionUser.id },
+  });
+
+  if (!cart) {
+    return next(new AppError('Must create a cart first', 400));
+  }
+
+  // Validate that the product exists in the cart
+  const productInCart = await ProductInCart.findOne({
+    where: { status: 'active', cartId: cart.id, productId },
+    include: [{ model: Product }],
+  });
+
+  if (!productInCart) {
+    return next(new AppError('This product does not exist in your cart', 404));
+  }
+
+  // Validate that the updated qty is not a negative number or exceeds the available stock
+  if (newQty < 0 || newQty > productInCart.product.quantity) {
+    return next(
+      new AppError(
+        `Invalid selected quantity, this product only has ${productInCart.product.quantity} items available`,
+        400
+      )
+    );
+  }
+
+  // If newQty is 0, remove product from cart (update status)
+  if (newQty === 0) {
+    await productInCart.update({ quantity: 0, status: 'removed' });
+  } else if (newQty > 0) {
+    // Update product in cart to new qty
+    await productInCart.update({ quantity: newQty });
+  }
+
   res.status(200).json({ status: 'success' });
 });
 
