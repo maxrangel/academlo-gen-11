@@ -1,0 +1,19 @@
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title NodeJS 
+    link(rel="stylesheet" href="./styles.css")
+
+  body
+    h1(class="title") #{title}
+    p This site is rendered by Pug
+
+    ul
+      each post in posts
+        li #{post.title}
+          p #{post.content}
+
+  script(src="./index.js")
+
