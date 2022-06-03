@@ -2,6 +2,7 @@
 const { Cart } = require('../models/cart.model');
 const { ProductInCart } = require('../models/productInCart.model');
 const { Product } = require('../models/product.model');
+const { Order } = require('../models/order.model');
 
 // Utils
 const { AppError } = require('../utils/appError');
@@ -23,11 +24,13 @@ const addProductToCart = catchAsync(async (req, res, next) => {
   const { sessionUser } = req;
 
   // Validate that the product has enough stock for the cart
-  const product = await Product.findOne({ where: { id: productId } });
+  const product = await Product.findOne({
+    where: { id: productId, status: 'active' },
+  });
 
   if (!product) {
     return next(new AppError('Invalid product', 404));
-  } else if (quantity > product.quantity) {
+  } else if (quantity < 0 || quantity > product.quantity) {
     return next(
       new AppError(
         `This product only has ${product.quantity} items available`,
@@ -51,18 +54,21 @@ const addProductToCart = catchAsync(async (req, res, next) => {
     // User already has a cart
     // Validate if product already exists in the cart
     const productInCart = await ProductInCart.findOne({
-      where: { cartId: cart.id, productId, status: 'active' },
+      where: { cartId: cart.id, productId },
     });
 
     // Send error if it exists
-    if (productInCart) {
+    if (productInCart && productInCart.status === 'active') {
       return next(
         new AppError('You already have that product in your cart', 400)
       );
+    } else if (productInCart && productInCart.status === 'removed') {
+      // Put back the product in the cart (update to active)
+      await productInCart.update({ status: 'active', quantity });
+    } else if (!productInCart) {
+      // Add new product to current cart
+      await ProductInCart.create({ cartId: cart.id, productId, quantity });
     }
-
-    // Add product to current cart
-    await ProductInCart.create({ cartId: cart.id, productId, quantity });
   }
 
   res.status(200).json({ status: 'success' });
@@ -113,7 +119,55 @@ const updateProductInCart = catchAsync(async (req, res, next) => {
 });
 
 const purchaseCart = catchAsync(async (req, res, next) => {
-  res.status(200).json({ status: 'success' });
+  const { sessionUser } = req;
+
+  // Get user's cart and get products in cart
+  const cart = await Cart.findOne({
+    where: { status: 'active', userId: sessionUser.id },
+    include: [
+      {
+        model: ProductInCart,
+        where: { status: 'active' },
+        include: [{ model: Product }],
+      },
+    ],
+  });
+
+  if (!cart) {
+    return next(new AppError('This user does not have a cart yet.', 400));
+  }
+
+  // await ProductInCart.findAll({ where: { cartId: cart.id } });
+
+  // Loop products in cart to do the following (map async)
+  let totalPrice = 0;
+
+  const cartPromises = cart.productInCarts.map(async productInCart => {
+    //  Substract to stock
+    const updatedQty = productInCart.product.quantity - productInCart.quantity;
+
+    await productInCart.product.update({ quantity: updatedQty });
+
+    //  Calculate total price
+    const productPrice = productInCart.quantity * +productInCart.product.price;
+    totalPrice += productPrice;
+
+    //  Mark products to status purchased
+    return await productInCart.update({ status: 'purchased' });
+  });
+
+  await Promise.all(cartPromises);
+
+  // Create order to user
+  const newOrder = await Order.create({
+    userId: sessionUser.id,
+    cartId: cart.id,
+    totalPrice,
+  });
+
+  await cart.update({ status: 'purchased' });
+
+  res.status(200).json({ status: 'success', newOrder });
 });
 
 const removeProductFromCart = catchAsync(async (req, res, next) => {

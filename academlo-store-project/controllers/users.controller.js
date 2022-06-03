@@ -6,6 +6,11 @@ const dotenv = require('dotenv');
 
 // Models
 const { User } = require('../models/user.model');
+const { Order } = require('../models/order.model');
+const { Cart } = require('../models/cart.model');
+const { Product } = require('../models/product.model');
+const { ProductInCart } = require('../models/productInCart.model');
+const { Category } = require('../models/category.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
@@ -96,15 +101,41 @@ const checkToken = catchAsync(async (req, res, next) => {
   res.status(200).json({ user: req.sessionUser });
 });
 
-const getUserProducts = catchAsync(async () => {
+const getUserProducts = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success' });
 });
 
-const getUserOrders = catchAsync(async () => {
-  res.status(200).json({ status: 'success' });
+const getUserOrders = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req;
+
+  const orders = await Order.findAll({
+    attributes: ['id', 'totalPrice', 'createdAt'],
+    where: { userId: sessionUser.id },
+    include: [
+      {
+        model: Cart,
+        attributes: ['id', 'status'],
+        include: [
+          {
+            model: ProductInCart,
+            attributes: ['quantity', 'status'],
+            include: [
+              {
+                model: Product,
+                attributes: ['id', 'title', 'description', 'price'],
+                include: [{ model: Category, attributes: ['name'] }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+
+  res.status(200).json({ status: 'success', orders });
 });
 
-const getUserOrderById = catchAsync(async () => {
+const getUserOrderById = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success' });
 });
 
