@@ -28,7 +28,8 @@ const protectToken = catchAsync(async (req, res, next) => {
 
   // decoded returns -> { id: 1, iat: 1651713776, exp: 1651717376 }
   const user = await User.findOne({
-    where: { id: decoded.id, status: 'active' },
+    id: decoded.id,
+    status: true,
   });
 
   if (!user) {
@@ -52,10 +53,7 @@ const protectAdmin = catchAsync(async (req, res, next) => {
 const userExists = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const user = await User.findOne({
-    where: { id, status: 'active' },
-    attributes: { exclude: ['password'] },
-  });
+  const user = await User.findById(id, { password: 0 });
 
   if (!user) {
     return next(new AppError('User does not exist with given Id', 404));

@@ -1,23 +1,15 @@
+const mongoose = require('mongoose');
+
 const { app } = require('./app');
 
-// Models
-const { initModels } = require('./models/initModels');
+// Establish connection to MongoDB Atlas
+mongoose.connect(
+  'mongodb+srv://maxrngl:pass1234@cluster0.cap4pkb.mongodb.net/mongo-example?retryWrites=true&w=majority'
+);
 
-// Utils
-const { db } = require('./utils/database');
-
-// Authenticate database credentials
-db.authenticate()
-  .then(() => console.log('Database authenticated'))
-  .catch(err => console.log(err));
-
-// Establish models relations
-initModels();
-
-// Sync sequelize models
-db.sync()
-  .then(() => console.log('Database synced'))
-  .catch(err => console.log(err));
+mongoose.connection.once('open', () => {
+  console.log('Connection succesful');
+});
 
 // Spin up server
 const PORT = process.env.PORT || 4000;

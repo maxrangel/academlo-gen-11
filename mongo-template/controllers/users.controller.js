@@ -14,9 +14,7 @@ const { AppError } = require('../utils/appError');
 dotenv.config({ path: './config.env' });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.findAll({
-    attributes: { exclude: ['password'] },
-  });
+  const users = await User.find();
 
   res.status(200).json({
     users,
@@ -24,16 +22,18 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 const createUser = catchAsync(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { name, age, email, password, role, hobbies } = req.body;
 
   const salt = await bcrypt.genSalt(12);
   const hashPassword = await bcrypt.hash(password, salt);
 
   const newUser = await User.create({
     name,
+    age,
     email,
     password: hashPassword,
     role,
+    hobbies,
   });
 
   // Remove password from response
@@ -54,7 +54,7 @@ const updateUser = catchAsync(async (req, res, next) => {
   const { user } = req;
   const { name } = req.body;
 
-  await user.update({ name });
+  await user.updateOne({ name });
 
   res.status(200).json({ status: 'success' });
 });
@@ -62,7 +62,7 @@ const updateUser = catchAsync(async (req, res, next) => {
 const deleteUser = catchAsync(async (req, res, next) => {
   const { user } = req;
 
-  await user.update({ status: 'deleted' });
+  await user.updateOne({ status: false });
 
   res.status(200).json({
     status: 'success',
@@ -74,7 +74,8 @@ const login = catchAsync(async (req, res, next) => {
 
   // Validate that user exists with given email
   const user = await User.findOne({
-    where: { email, status: 'active' },
+    email,
+    status: true,
   });
 
   // Compare password with db
