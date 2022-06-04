@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const { app } = require('./app');
 
+const MONGO_URL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cap4pkb.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`;
+
 // Establish connection to MongoDB Atlas
-mongoose.connect(
-  'mongodb+srv://maxrngl:pass1234@cluster0.cap4pkb.mongodb.net/mongo-example?retryWrites=true&w=majority'
-);
+mongoose.connect(MONGO_URL);
 
 mongoose.connection.once('open', () => {
   console.log('Connection succesful');
